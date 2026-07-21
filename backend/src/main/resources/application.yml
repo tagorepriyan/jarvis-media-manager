@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: jarvis-backend
+  servlet:
+    multipart:
+      max-file-size: ${JARVIS_UPLOAD_MAX_FILE_SIZE:4GB}
+      max-request-size: ${JARVIS_UPLOAD_MAX_REQUEST_SIZE:4GB}
+  datasource:
+    url: ${JARVIS_DB_URL:jdbc:postgresql://localhost:5432/jarvis}
+    username: ${JARVIS_DB_USERNAME:jarvis}
+    password: ${JARVIS_DB_PASSWORD:jarvis}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      initialization-fail-timeout: -1
+      maximum-pool-size: ${JARVIS_DB_POOL_SIZE:10}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  sql:
+    init:
+      mode: never
+
+jarvis:
+  import:
+    chunk-size: ${JARVIS_IMPORT_CHUNK_SIZE:1900MB}
+    default-provider-type: ${JARVIS_DEFAULT_PROVIDER_TYPE:telegram}
+
+logging:
+  level:
+    root: INFO
+    com.jarvis: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n"
