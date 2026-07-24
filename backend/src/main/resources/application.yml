@@ -6,9 +6,9 @@ spring:
       max-file-size: ${JARVIS_UPLOAD_MAX_FILE_SIZE:4GB}
       max-request-size: ${JARVIS_UPLOAD_MAX_REQUEST_SIZE:4GB}
   datasource:
-    url: ${JARVIS_DB_URL:jdbc:postgresql://localhost:5432/jarvis}
-    username: ${JARVIS_DB_USERNAME:jarvis}
-    password: ${JARVIS_DB_PASSWORD:jarvis}
+    url: jdbc:postgresql://localhost:5432/jarvis
+    username: ${JARVIS_DB_USERNAME:postgres}
+    password: ${JARVIS_DB_PASSWORD:Tagore@2005}
     driver-class-name: org.postgresql.Driver
     hikari:
       initialization-fail-timeout: -1

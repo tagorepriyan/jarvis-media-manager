@@ -31,7 +31,9 @@ com\jarvis\service\ImportPipelineService.class
 com\jarvis\domain\MediaItem.class
 com\jarvis\JarvisApplication.class
 com\jarvis\domain\Movie$MovieBuilderImpl.class
+com\jarvis\validation\DatabaseConnectionValidator.class
 com\jarvis\domain\MediaVersion$MediaVersionBuilder.class
 com\jarvis\domain\Music$MusicBuilderImpl.class
+com\jarvis\controller\HealthController.class
 com\jarvis\dto\ImportMovieResponse$ImportMovieResponseBuilder.class
 com\jarvis\service\StorageUploadGateway.class
