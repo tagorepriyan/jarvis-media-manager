@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastTele Client</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+    <a class="skip-link" href="#mainContent">Skip to transfer console</a>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand-lockup">
+                <span class="brand-mark">FT</span>
+                <div>
+                    <p class="eyebrow">TELEGRAM TRANSFER CONSOLE</p>
+                    <h1>FastTele</h1>
+                </div>
+            </div>
+            <div class="header-actions"><div class="connection-state" id="connectionState"><span class="state-dot"></span><span id="connectionLabel">Ready</span></div><button id="settingsBtn" class="header-button" type="button" aria-expanded="true" aria-controls="settingsPanel">Access <span class="header-button-icon">⌄</span></button></div>
+        </header>
+        
+        <main id="mainContent">
+            <!-- 1. Credentials Card -->
+            <div class="card auth-card fade-in" id="settingsPanel">
+                <div class="section-heading"><div><p class="section-kicker">01 / ACCESS</p><h2>Authentication</h2></div><span class="section-status">LOCAL ONLY</span></div>
+                <div class="input-row">
+                    <div class="input-wrapper">
+                        <label for="apiId">API ID</label>
+                        <input type="text" id="apiId" placeholder="1234567" autocomplete="off">
+                    </div>
+                    <div class="input-wrapper">
+                        <label for="apiHash">API Hash</label>
+                        <input type="password" id="apiHash" placeholder="••••••••••••••••" autocomplete="off">
+                    </div>
+                </div>
+                
+                <div class="auth-toggle">
+                    <label class="radio-label">
+                        <input type="radio" name="authMode" value="user" checked> 
+                        <span class="radio-custom"></span> User Account
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="authMode" value="bot"> 
+                        <span class="radio-custom"></span> Bot Token
+                    </label>
+                </div>
+                <div class="input-wrapper hidden" id="botTokenContainer">
+                    <label for="botToken">Bot Token</label>
+                    <input type="password" id="botToken" placeholder="123456:ABC-DEF..." autocomplete="off">
+                </div>
+            </div>
+
+            <!-- 2. Action Tabs -->
+            <div class="card tabs-card fade-in">
+                <div class="tab-header">
+                    <button id="tabUploadBtn" class="tab-btn active" type="button" role="tab" aria-selected="true" aria-controls="uploadTabContent"><span class="tab-icon">↑</span> Upload</button>
+                    <button id="tabDownloadBtn" class="tab-btn" type="button" role="tab" aria-selected="false" aria-controls="downloadTabContent"><span class="tab-icon">↓</span> Download</button>
+                    <div class="tab-indicator"></div>
+                </div>
+
+                <div class="tab-body">
+                    <!-- Upload Section -->
+                    <div id="uploadTabContent" class="tab-content active-tab" role="tabpanel" aria-labelledby="tabUploadBtn">
+                        <div class="chat-manager-row">
+                            <div class="input-wrapper">
+                                <label for="upChatSelect">Destination Chat</label>
+                                <select id="upChatSelect"></select>
+                            </div>
+                            <button id="manageChatsBtn1" class="btn-outline" type="button">Edit Chats</button>
+                        </div>
+
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="groupedToggle" checked>
+                            <span class="slider"></span>
+                            <span class="toggle-label">Group files into Albums (Max 10)</span>
+                        </label>
+
+                        <div class="input-wrapper">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <label for="connectionCount">Parallel Connections (Speed Tuning)</label>
+                                <span id="connCountLabel" style="font-size: 0.85rem; font-weight: 700; color: var(--primary);">Auto</span>
+                            </div>
+                            <input type="range" id="connectionCount" min="0" max="20" value="0" class="custom-slider">
+                            <span class="muted-text">0 = Auto. Higher values (8+) increase speed but may trigger server throttling.</span>
+                        </div>
+
+                        <div class="input-wrapper">
+                            <label for="folderPath">Source Directory or File</label>
+                            <div class="action-row">
+                                <input type="text" id="folderPath" placeholder="E:\Movies\...">
+                                <button id="scanBtn" class="btn-secondary" type="button">Scan</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Download Section -->
+                    <div id="downloadTabContent" class="tab-content hidden" role="tabpanel" aria-labelledby="tabDownloadBtn">
+                        <div class="chat-manager-row">
+                            <div class="input-wrapper">
+                                <label for="downChatSelect">Source Chat</label>
+                                <select id="downChatSelect"></select>
+                            </div>
+                            <button id="manageChatsBtn2" class="btn-outline" type="button">Edit Chats</button>
+                        </div>
+                        
+                        <div class="input-row">
+                            <div class="input-wrapper">
+                                <label for="scanLimit">Scan Limit</label>
+                                <input type="number" id="scanLimit" placeholder="10" value="10" min="1" inputmode="numeric">
+                            </div>
+                            <div class="input-wrapper">
+                                <label for="savePath">Save Location</label>
+                                <input type="text" id="savePath" placeholder="./downloads/" value="./downloads/">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Progress Card -->
+            <div class="card progress-card fade-in">
+                <div class="progress-header">
+                    <div><p class="section-kicker">02 / TELEMETRY</p><h2>Live Metrics</h2></div>
+                    <span id="statPct" class="pill">0.0%</span>
+                </div>
+                
+                <p id="currentFile" class="status-text">Awaiting task...</p>
+                
+                <div class="progress-track">
+                    <div id="progressBar" class="progress-fill"></div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span class="stat-label">Speed</span>
+                        <span id="statSpeed" class="stat-value">0.00 MB/s</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Transferred</span>
+                        <span id="statSize" class="stat-value">0 / 0 MB</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">ETA</span>
+                        <span id="statEta" class="stat-value">--:--</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Job progress</span>
+                        <span id="statJob" class="stat-value">0 / 0 files</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Remaining</span>
+                        <span id="statRemaining" class="stat-value">0 MB</span>
+                    </div>
+                </div>
+                <div class="action-bar monitor-actions">
+                    <button id="pauseBtn" class="btn-outline" type="button" disabled><span>PAUSE</span><span>Ⅱ</span></button>
+                    <button id="cancelBtn" class="btn-danger" type="button" disabled><span>ABORT</span><span>×</span></button>
+                </div>
+            </div>
+
+            <!-- 4. Terminal Log Frame -->
+            <div class="card log-card fade-in">
+                <div class="section-heading"><div><p class="section-kicker">03 / EVENT STREAM</p><h2>System Logs</h2></div><button id="clearLogsBtn" class="text-button" type="button">Clear</button></div>
+                <div id="consoleLog" class="console-box"></div>
+            </div>
+
+            <!-- 5. Action Buttons -->
+            <div class="action-bar fade-in">
+                <button id="startBtn" class="btn-primary" type="button"><span>START TRANSFER</span><span class="button-arrow">↗</span></button>
+            </div>
+            <div class="card queue-card fade-in">
+                <div class="section-heading"><div><p class="section-kicker">04 / QUEUE</p><h2>Transfer Queue</h2></div><button id="selectAllBtn" class="text-button" type="button">Select all</button></div>
+                <div class="scan-results"><div class="queue-summary"><span id="fileCountLabel">Ready to scan...</span><span id="queueSizeLabel">0 MB</span></div><div id="queueEmpty" class="queue-empty"><span class="empty-mark">+</span><span>Scan a file or folder to stage transfer items.</span></div><ul id="fileList" class="file-list"></ul></div>
+            </div>
+            <div class="card message-card fade-in">
+                <div class="section-heading"><div><p class="section-kicker">05 / BROADCAST</p><h2>Send Message</h2></div><span class="section-status">BOT API</span></div>
+                <div class="message-grid">
+                    <div class="input-wrapper">
+                        <label for="messageChatSelect">Chat</label>
+                        <select id="messageChatSelect"></select>
+                    </div>
+                    <label class="message-option"><input type="checkbox" id="silentMessage"><span>Silent</span></label>
+                </div>
+                <div class="input-wrapper">
+                    <label for="messageText">Message</label>
+                    <textarea id="messageText" rows="3" placeholder="Write an announcement or transfer note..."></textarea>
+                </div>
+                <button id="sendMessageBtn" class="btn-secondary message-button" type="button">SEND MESSAGE <span>↗</span></button>
+            </div>
+            <div id="toast" class="toast" role="status" aria-live="polite"></div>
+        </main>
+    </div>
+
+    <!-- Address Book Modal -->
+    <div id="chatModal" class="modal-backdrop" role="presentation" aria-hidden="true" hidden>
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="chatModalTitle">
+            <h2 id="chatModalTitle">Address Book</h2>
+            <ul id="modalChatList" class="modal-list"></ul>
+            
+            <div class="input-row" style="margin-top: 15px;">
+                <div class="input-wrapper">
+                    <label for="newChatName">Label</label>
+                    <input type="text" id="newChatName" placeholder="My Channel">
+                </div>
+                <div class="input-wrapper">
+                    <label for="newChatLink">Link / Chat ID</label>
+                    <input type="text" id="newChatLink" placeholder="-1001234567890">
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button id="addChatBtn" class="btn-primary" type="button">Add Chat</button>
+                <button id="closeModalBtn" class="btn-outline" type="button">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
